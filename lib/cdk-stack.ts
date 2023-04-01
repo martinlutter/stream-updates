@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import {aws_events_targets, aws_lambda, aws_lambda_nodejs, aws_ssm, Duration, StackProps} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Rule, Schedule} from "aws-cdk-lib/aws-events";
+import {RetentionDays} from "aws-cdk-lib/aws-logs";
 
 interface CdkStackProps extends StackProps {
     discordWebhookUrl: string;
@@ -33,12 +34,14 @@ export class CdkStack extends cdk.Stack {
                 STREAM_NAME: props.streamName,
                 STREAM_LINK: props.streamLink,
                 SEARCH_BY_CSS_SELECTOR: props.searchByCssSelector,
-                LD_PRELOAD: '/var/task/node_modules/canvas/build/Release/libz.so.1' //because of some fucking canvas lib
             },
             bundling: {
+                minify: true,
                 nodeModules: ['jsdom'],
                 externalModules: ['canvas'],
-            }
+                sourceMap: false,
+            },
+            logRetention: RetentionDays.THREE_MONTHS,
         })
 
         streamOnlineParam.grantRead(lambda)

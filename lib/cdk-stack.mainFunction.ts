@@ -7,8 +7,10 @@ import {environment} from "../environment.js";
 
 export const handler = async (event: CloudWatchLogsEvent, context: Context) => {
     const wasStreamOnlineBefore = await wasStreamOnline();
+    console.log('was online before? ' + wasStreamOnlineBefore.toString())
 
     const streamStatus = await getStreamStatus(environment.streamName);
+    console.log('is online? ' + streamStatus.isOnline.toString())
 
     if (streamStatus.isOnline && !wasStreamOnlineBefore) {
         await setStreamStatus(true)
